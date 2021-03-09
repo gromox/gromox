@@ -454,7 +454,7 @@ static uint32_t getaddressbookurl(GUID session_guid,
 	
 	get_id_from_username(username, &user_id);
 	memset(username1, 0, sizeof(username1));
-	strcpy(username1, username);
+	HX_strlcpy(username1, username, GX_ARRAY_SIZE(username1));
 	ptoken = strchr(username1, '@');
 	HX_strlower(username1);
 	if (NULL != ptoken) {
