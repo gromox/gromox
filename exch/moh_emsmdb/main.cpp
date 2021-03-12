@@ -629,9 +629,7 @@ static BOOL emsmdb_proc(int context_id,
 	char dstring[128];
 	EXT_PULL ext_pull;
 	EXT_PUSH ext_push;
-	GUID session_guid;
-	GUID session_guid1;
-	GUID sequence_guid;
+	GUID session_guid{}, session_guid1, sequence_guid{};
 	const char *pstring;
 	char tmp_buff[1024];
 	char request_id[256];
@@ -640,7 +638,7 @@ static BOOL emsmdb_proc(int context_id,
 	HTTP_REQUEST *prequest;
 	SESSION_DATA *psession;
 	EMSMDB_REQUEST request;
-	char session_string[64];
+	char session_string[64]{};
 	char push_buff[0x80000];
 	EMSMDB_RESPONSE response;
 	SESSION_DATA tmp_session;

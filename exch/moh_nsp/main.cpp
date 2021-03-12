@@ -552,7 +552,7 @@ static BOOL nsp_proc(int context_id, const void *pcontent, uint64_t length)
 	char request_value[32];
 	HTTP_REQUEST *prequest;
 	SESSION_DATA *psession;
-	char session_string[64];
+	char session_string[64]{};
 	SESSION_DATA tmp_session;
 	HTTP_AUTH_INFO auth_info;
 	struct timeval start_time;
