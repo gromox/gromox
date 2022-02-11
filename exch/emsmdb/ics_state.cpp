@@ -4,8 +4,11 @@
 #include <memory>
 #include <gromox/mapi_types.hpp>
 #include <gromox/rop_util.hpp>
+#include <gromox/util.hpp>
 #include "common_util.h"
 #include "ics_state.h"
+
+using LLU = unsigned long long;
 
 static ics_state *ics_state_init(ics_state *pstate, logon_object *plogon, int type)
 {
@@ -101,6 +104,25 @@ std::shared_ptr<ics_state> ics_state::create_shared(logon_object *plogon, int ty
 	return nullptr;
 }
 
+static void dump(ics_state *is, uint32_t proptag, idset *pset)
+{
+	fprintf(stderr, "dump of ics_state %p (%xh, %s)={\n", is, proptag,
+		proptag == MetaTagIdsetGiven ? "idgiven" :
+		proptag == MetaTagIdsetGiven1 ? "idgiven1" :
+		proptag == MetaTagCnsetSeen ? "cnseen" : "other");
+	for (const auto &repl_node : pset->repl_list) {
+	for (const auto &range_node : repl_node.range_list) {
+		if (pset->repl_type == REPL_TYPE_GUID)
+			fprintf(stderr, "\t%s ", gromox::bin2hex(repl_node.replguid).c_str());
+		else
+			fprintf(stderr, "\t#%u ", repl_node.replid);
+		fprintf(stderr, "%llxh--%llxh\n", LLU(range_node.low_value),
+			LLU(range_node.high_value));
+	}
+	}
+	fprintf(stderr, "}\n");
+}
+
 BOOL ics_state::append_idset(uint32_t state_property, std::unique_ptr<idset> &&pset)
 {
 	auto pstate = this;
@@ -108,6 +130,7 @@ BOOL ics_state::append_idset(uint32_t state_property, std::unique_ptr<idset> &&p
 	case MetaTagIdsetGiven:
 	case MetaTagIdsetGiven1:
 		pstate->pgiven = std::move(pset);
+		dump(this, state_property, pstate->pgiven.get());
 		return TRUE;
 	case MetaTagCnsetSeen:
 		if (NULL != pstate->pseen) {
@@ -118,6 +141,7 @@ BOOL ics_state::append_idset(uint32_t state_property, std::unique_ptr<idset> &&p
 				return FALSE;
 		}
 		pstate->pseen = std::move(pset);
+		dump(this, state_property, pstate->pseen.get());
 		return TRUE;
 	case MetaTagCnsetSeenFAI:
 		if (NULL != pstate->pseen_fai) {

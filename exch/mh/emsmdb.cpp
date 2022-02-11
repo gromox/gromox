@@ -590,6 +590,7 @@ MhEmsmdbPlugin::ProcRes MhEmsmdbPlugin::connect(MhEmsmdbContext &ctx)
 				if (!emplaced.second) {
 					hl_hold.unlock();
 					emsmdb_bridge_disconnect(ctx.session_guid);
+					printf("E-9996: insufficient rsrc EMS\n");
 					return ctx.failure_response(ecInsufficientResrc);
 				}
 				auto ucount = users.emplace(emplaced.first->second.username, 0);

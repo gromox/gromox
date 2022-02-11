@@ -511,7 +511,7 @@ static int rop_processor_execute_and_push(uint8_t *pbuff,
 			dbg = true;
 		if (g_rop_debug >= 1 && rsp != nullptr && rsp->result != 0)
 			dbg = true;
-		if (dbg) {
+		if (dbg && req->rop_id != ropIdFromLongTermId) {
 			if (rsp != nullptr)
 				fprintf(stderr, "rop_dispatch(%s) EC=%xh RS=%xh\n",
 					rop_idtoname(req->rop_id), result, rsp->result);

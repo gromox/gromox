@@ -537,6 +537,7 @@ MhNspPlugin::ProcRes MhNspPlugin::bind(MhNspContext& ctx)
 			if (!emplaced.second) {
 				hl_hold.unlock();
 				nsp_bridge_unbind(ctx.session_guid, 0);
+				printf("E-9995: insufficient NSP\n");
 				return ctx.failure_response(ecInsufficientResrc);
 			}
 			auto ucount = users.emplace(emplaced.first->second.username, 0);

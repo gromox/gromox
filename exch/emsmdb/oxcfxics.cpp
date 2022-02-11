@@ -26,6 +26,8 @@
 #include "rop_funcs.hpp"
 #include "rop_processor.h"
 
+using LLU = unsigned long long;
+
 static EID_ARRAY *oxcfxics_load_folder_messages(logon_object *plogon,
     uint64_t folder_id, const char *username, BOOL b_fai)
 {
@@ -843,6 +845,11 @@ uint32_t rop_syncconfigure(uint8_t sync_type, uint8_t send_options,
 	if (hnd < 0) {
 		return ecError;
 	}
+	fprintf(stderr, "rop_syncconfigure: %s, fld %llu, icsdown %p hnd %llu, pstate %p\n",
+		sync_type == SYNC_TYPE_HIERARCHY ? "hier" :
+		sync_type == SYNC_TYPE_CONTENTS ? "cont" : "unknown",
+		LLU(rop_util_get_gc_value(pfolder->folder_id)),
+		pctx.get(), LLU(hnd), pctx->pstate.get());
 	pctx.release();
 	*phout = hnd;
 	return ecSuccess;
@@ -1665,6 +1672,11 @@ uint32_t rop_syncuploadstatestreambegin(uint32_t proptag_state,
 	auto pctx = rop_processor_get_object(plogmap, logon_id, hin, &object_type);
 	if (pctx == nullptr)
 		return ecNullObject;
+	fprintf(stderr, "rop_syncuploadstatestreambegin: hin %u (type %u), tag %xh (%s)\n",
+		hin, object_type, proptag_state,
+		proptag_state == MetaTagIdsetGiven ? "idgiven0" :
+		proptag_state == MetaTagIdsetGiven1 ? "idgiven1" :
+		proptag_state == MetaTagCnsetSeen ? "cnseen" : "other");
 	if (OBJECT_TYPE_ICSDOWNCTX == object_type) {
 		if (!static_cast<icsdownctx_object *>(pctx)->begin_state_stream(proptag_state))
 			return ecError;

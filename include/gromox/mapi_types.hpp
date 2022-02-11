@@ -1,4 +1,5 @@
 #pragma once
+#include <cassert>
 #include <cstdint>
 #include <cstring>
 #include <memory>
@@ -744,9 +745,10 @@ using REPLIST_ENUM = void (*)(void *, uint16_t);
 using REPLICA_ENUM = void (*)(void *, uint64_t);
 
 struct range_node {
-	range_node(uint64_t a, uint64_t b) noexcept : low_value(a), high_value(b) {}
+	range_node(uint64_t a, uint64_t b) noexcept : low_value(a), high_value(b) { assert(low_value <= high_value); }
 	constexpr inline bool contains(uint64_t i) const
 		{ return low_value <= i && i <= high_value; }
+	~range_node() { assert(low_value <= high_value); }
 	uint64_t low_value, high_value;
 };
 using RANGE_NODE = range_node;
