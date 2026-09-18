@@ -1,3 +1,4 @@
+.
 Schedule
 ========
 It's ready when it's ready.
